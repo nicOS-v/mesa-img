@@ -62,11 +62,15 @@ if not with_glvnd
   endif
 
   if with_opengl
+    opengl_subdir = 'GL'
+    if host_machine.system() == 'windows'
+      opengl_subdir = 'mesa/GL'
+    endif
     install_headers(
       'GL/gl.h',
       'GL/glcorearb.h',
       'GL/glext.h',
-      subdir : 'GL',
+      subdir : opengl_subdir,
     )
   endif
 
