@@ -20,6 +20,7 @@
 
 files_mesa_util_c11 = files(
   'time.c',
+  'threads.c',
 )
 
 _libmesa_util_c11 = static_library(
