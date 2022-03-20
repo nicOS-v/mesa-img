@@ -58,7 +58,7 @@ libglesv1_cm = shared_library(
   link_with : libglapi,
   dependencies : [dep_thread, dep_libdrm, dep_m, dep_dl, idep_mesautilc11],
   soversion : host_machine.system() == 'windows' ? '' : '1',
-  version : '1.1.0',
+  version : '1.2.0',
   darwin_versions  : '3.0.0',
   name_prefix : 'lib',
   install : true,

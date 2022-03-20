@@ -109,7 +109,7 @@ endif
 
 if not with_glvnd
   gl_lib_name = 'GL'
-  gl_lib_version = '1.2.0'
+  gl_lib_version = '1.7.0'
 else
   gl_lib_name = 'GLX_@0@'.format(glvnd_vendor_name)
   gl_lib_version = '0.0.0'

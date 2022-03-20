@@ -157,7 +157,7 @@ endif
 
 if not with_glvnd
   egl_lib_name = 'EGL' + get_option('egl-lib-suffix')
-  egl_lib_version = '1.0.0'
+  egl_lib_version = '1.1.0'
   egl_lib_soversion = host_machine.system() == 'windows' ? '' : '1'
 else
   egl_lib_name = 'EGL_@0@'.format(glvnd_vendor_name)
