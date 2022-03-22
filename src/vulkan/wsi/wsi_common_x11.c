@@ -321,15 +321,22 @@ wsi_x11_connection_destroy(struct wsi_device *wsi_dev,
 }
 
 static bool
-wsi_x11_check_for_dri3(struct wsi_x11_connection *wsi_conn)
+wsi_x11_check_for_visual_supported(bool is_sw, struct wsi_x11_connection *wsi_conn, xcb_visualtype_t *visual)
 {
-  if (wsi_conn->has_dri3)
-    return true;
-  if (!wsi_conn->is_proprietary_x11) {
-    fprintf(stderr, "vulkan: No DRI3 support detected - required for presentation\n"
-                    "Note: you can probably enable DRI3 in your Xorg config\n");
-  }
-  return false;
+   if (is_sw || wsi_conn->has_dri3)
+   {
+      /* check for visual support */
+      if (!visual)
+         return false;
+
+      return visual->bits_per_rgb_value == 8 || visual->bits_per_rgb_value == 10;
+   }
+   if (!wsi_conn->is_proprietary_x11)
+   {
+      fprintf(stderr, "vulkan: No DRI3 support detected - required for presentation\n"
+                      "Note: you can probably enable DRI3 in your Xorg config\n");
+   }
+   return false;
 }
 
 /**
@@ -496,15 +503,6 @@ visual_has_alpha(xcb_visualtype_t *visual, unsigned depth)
    return (all_mask & ~rgb_mask) != 0;
 }
 
-static bool
-visual_supported(xcb_visualtype_t *visual)
-{
-   if (!visual)
-      return false;
-
-   return visual->bits_per_rgb_value == 8 || visual->bits_per_rgb_value == 10;
-}
-
 VKAPI_ATTR VkBool32 VKAPI_CALL
 wsi_GetPhysicalDeviceXcbPresentationSupportKHR(VkPhysicalDevice physicalDevice,
                                                uint32_t queueFamilyIndex,
@@ -519,15 +517,8 @@ wsi_GetPhysicalDeviceXcbPresentationSupportKHR(VkPhysicalDevice physicalDevice,
    if (!wsi_conn)
       return false;
 
-   if (!wsi_device->sw) {
-      if (!wsi_x11_check_for_dri3(wsi_conn))
-         return false;
-   }
-
-   if (!visual_supported(connection_get_visualtype(connection, visual_id)))
-      return false;
-
-   return true;
+   return wsi_x11_check_for_visual_supported(wsi_device->sw, wsi_conn,
+                                             connection_get_visualtype(connection, visual_id));
 }
 
 VKAPI_ATTR VkBool32 VKAPI_CALL
@@ -564,7 +555,7 @@ static VkResult
 x11_surface_get_support(VkIcdSurfaceBase *icd_surface,
                         struct wsi_device *wsi_device,
                         uint32_t queueFamilyIndex,
-                        VkBool32* pSupported)
+                        VkBool32 *pSupported)
 {
    xcb_connection_t *conn = x11_surface_get_connection(icd_surface);
    xcb_window_t window = x11_surface_get_window(icd_surface);
@@ -574,19 +565,8 @@ x11_surface_get_support(VkIcdSurfaceBase *icd_surface,
    if (!wsi_conn)
       return VK_ERROR_OUT_OF_HOST_MEMORY;
 
-   if (!wsi_device->sw) {
-      if (!wsi_x11_check_for_dri3(wsi_conn)) {
-         *pSupported = false;
-         return VK_SUCCESS;
-      }
-   }
-
-   if (!visual_supported(get_visualtype_for_window(conn, window, NULL))) {
-      *pSupported = false;
-      return VK_SUCCESS;
-   }
-
-   *pSupported = true;
+   *pSupported = wsi_x11_check_for_visual_supported(wsi_device->sw, wsi_conn,
+                                                    get_visualtype_for_window(conn, window, NULL));
    return VK_SUCCESS;
 }
 
