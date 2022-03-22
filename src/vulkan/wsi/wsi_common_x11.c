@@ -58,6 +58,7 @@
 #endif
 
 struct wsi_x11_connection {
+   bool has_dri_kopper;
    bool has_dri3;
    bool has_dri3_modifiers;
    bool has_present;
@@ -238,6 +239,7 @@ wsi_x11_connection_create(struct wsi_device *wsi_dev,
       return NULL;
    }
 
+   wsi_conn->has_dri_kopper = false; /* TODO: how to check the display are using `swrast` or `zink` */
    wsi_conn->has_dri3 = dri3_reply->present != 0;
 #ifdef HAVE_DRI3_MODIFIERS
    if (wsi_conn->has_dri3) {
@@ -323,7 +325,7 @@ wsi_x11_connection_destroy(struct wsi_device *wsi_dev,
 static bool
 wsi_x11_check_for_visual_supported(bool is_sw, struct wsi_x11_connection *wsi_conn, xcb_visualtype_t *visual)
 {
-   if (is_sw || wsi_conn->has_dri3)
+   if (is_sw || wsi_conn->has_dri3 || wsi_conn->has_dri_kopper)
    {
       /* check for visual support */
       if (!visual)
