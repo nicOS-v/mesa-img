@@ -391,9 +391,6 @@ if _gbm == 'auto'
 else
   with_gbm = _gbm == 'enabled'
 endif
-if with_gbm and not system_has_kms_drm
-  error('GBM only supports DRM/KMS platforms')
-endif
 
 _xlib_lease = get_option('xlib-lease')
 if _xlib_lease == 'true'
@@ -478,7 +475,7 @@ endif
 
 if with_egl
   _platforms += 'surfaceless'
-  if with_gbm and not with_platform_android
+  if system_has_kms_drm and not with_platform_android
     _platforms += 'drm'
   endif
 

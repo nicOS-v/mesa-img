@@ -21,12 +21,18 @@
 inc_gbm = include_directories('.', 'main', 'backends/dri')
 
 files_gbm = files(
-  'main/backend.c',
   'main/backend.h',
   'main/gbm.c',
   'main/gbm.h',
   'main/gbmint.h',
 )
+
+if system_has_kms_drm
+  files_gbm += ['main/backend.c']
+else
+  files_gbm += ['main/backend_stub.c']
+endif
+
 deps_gbm = []
 args_gbm = [
   '-DDEFAULT_BACKENDS_PATH="@0@"'.format(gbm_backends_path),
@@ -45,13 +51,18 @@ if with_platform_wayland
   incs_gbm += inc_wayland_drm
 endif
 
+link_with_gbm = []
+if system_has_kms_drm
+  link_with_gbm += [libloader]
+endif
+
 libgbm = shared_library(
   'gbm',
   files_gbm,
   include_directories : incs_gbm,
   c_args : [args_gbm],
   link_args : [ld_args_gc_sections],
-  link_with : libloader,
+  link_with : link_with_gbm,
   dependencies : [deps_gbm, dep_dl, dep_thread, idep_mesautil, idep_xmlconfig],
   gnu_symbol_visibility : 'hidden',
   version : '1.0.0',
