@@ -347,7 +347,7 @@ wsi_x11_check_for_visual_supported(
     struct wsi_x11_connection *wsi_conn,
     xcb_visualtype_t *visual)
 {
-   if (wsi_device->sw || wsi_conn->has_dri3)
+   if (wsi_device->support_kopper_display || wsi_device->sw || wsi_conn->has_dri3)
    {
       /* check for visual support */
       if (!visual)

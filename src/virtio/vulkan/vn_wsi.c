@@ -85,6 +85,7 @@ vn_wsi_init(struct vn_physical_device *physical_dev)
    if (result != VK_SUCCESS)
       return result;
 
+   physical_dev->wsi_device.support_kopper_display = true;
    if (physical_dev->base.base.supported_extensions
           .EXT_image_drm_format_modifier)
       physical_dev->wsi_device.supports_modifiers = true;
