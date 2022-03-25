@@ -135,6 +135,7 @@ struct wsi_device {
       bool xwaylandWaitReady;
    } x11;
 
+   /* Wheter this vulkan device is software device such as lavapipe or not */
    bool sw;
 
    /* Signals the semaphore such that any wait on the semaphore will wait on
