@@ -563,7 +563,6 @@ wsi_win32_surface_create_swapchain(
 
    chain->surface = surface;
 
-   assert(wsi_device->sw);
    chain->base.use_buffer_blit = true;
 
    result = wsi_configure_win32_image(&chain->base, create_info,
