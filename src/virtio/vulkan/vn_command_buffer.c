@@ -138,8 +138,6 @@ vn_cmd_fix_image_memory_barrier(const struct vn_command_buffer *cmd,
        out_barrier->newLayout != VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
       return;
 
-   assert(img->wsi.is_wsi);
-
    if (VN_PRESENT_SRC_INTERNAL_LAYOUT == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
       return;
 
