@@ -26,8 +26,8 @@
 #ifndef _ANON_FILE_H_
 #define _ANON_FILE_H_
 
-#include <sys/types.h>
+#include <stdint.h>
 
-int os_create_anonymous_file(off_t size, const char *debug_name);
+int os_create_anonymous_file(intptr_t size, const char *debug_name);
 
 #endif

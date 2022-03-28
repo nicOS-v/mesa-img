@@ -27,8 +27,9 @@
  * Based on weston shared/os-compatibility.c
  */
 
-#ifndef _WIN32
 #include "anon_file.h"
+
+#ifndef _WIN32
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -112,7 +113,7 @@ create_tmpfile_cloexec(char *tmpname)
  * SCM_RIGHTS methods.
  */
 int
-os_create_anonymous_file(off_t size, const char *debug_name)
+os_create_anonymous_file(intptr_t size, const char *debug_name)
 {
    int fd, ret;
 #if defined(HAVE_MEMFD_CREATE)
@@ -162,5 +163,23 @@ os_create_anonymous_file(off_t size, const char *debug_name)
    }
 
    return fd;
+}
+#else
+
+#include <windows.h>
+#include <io.h>
+
+int
+os_create_anonymous_file(intptr_t size, const char *debug_name)
+{
+   (void)debug_name;
+#if UINTPTR_MAX == 0xFFFFFFFFFFFFFFFFull
+   HANDLE h = CreateFileMappingW(INVALID_HANDLE_VALUE, NULL,
+      PAGE_EXECUTE_READWRITE, (size >> 32), size & 0xFFFFFFFF, NULL);
+#else
+   HANDLE h = CreateFileMappingW(INVALID_HANDLE_VALUE, NULL,
+      PAGE_EXECUTE_READWRITE, 0, size, NULL);
+#endif
+   return _open_osfhandle((intptr_t)h, 0);
 }
 #endif
