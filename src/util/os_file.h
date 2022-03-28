@@ -9,6 +9,7 @@
 #define _OS_FILE_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #ifdef __cplusplus
@@ -51,6 +52,12 @@ os_read_file(const char *filename, size_t *size);
  */
 int
 os_same_file_description(int fd1, int fd2);
+
+int
+os_close_file(int fd);
+
+uint64_t
+os_lseek_file(int fd, int64_t offset, int origin);
 
 #ifdef __cplusplus
 }

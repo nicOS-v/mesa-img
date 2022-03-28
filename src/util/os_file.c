@@ -225,3 +225,19 @@ os_same_file_description(int fd1, int fd2)
 }
 
 #endif
+
+int
+os_close_file(int fd)
+{
+   return close(fd);
+}
+
+uint64_t
+os_lseek_file(int fd, int64_t offset, int origin)
+{
+#ifdef _WIN32
+   return _lseeki64(fd, offset, origin);
+#else
+   return lseek(fd, offset, origin);
+#endif
+}
