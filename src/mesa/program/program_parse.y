@@ -128,7 +128,7 @@ static struct asm_instruction *asm_instruction_copy_ctor(
    } while(0)
 %}
 
-%pure-parser
+%define api.pure
 %locations
 %lex-param   { struct asm_parser_state *state }
 %parse-param { struct asm_parser_state *state }

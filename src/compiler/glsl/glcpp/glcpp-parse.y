@@ -173,7 +173,7 @@ add_builtin_define(glcpp_parser_t *parser, const char *name, int value);
 
 %}
 
-%pure-parser
+%define api.pure
 %error-verbose
 
 %locations
