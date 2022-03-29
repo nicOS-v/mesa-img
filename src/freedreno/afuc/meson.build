@@ -37,7 +37,8 @@ afuc_lexer = custom_target(
   output: 'lexer.c',
   command: [
     prog_flex, '-o', '@OUTPUT@', '@INPUT@'
-  ]
+  ],
+  console: true,
 )
 
 asm = executable(

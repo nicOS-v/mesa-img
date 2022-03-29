@@ -57,7 +57,8 @@ ir3_lexer = custom_target(
   output: 'ir3_lexer.c',
   command: [
     prog_flex, '-o', '@OUTPUT@', '@INPUT@'
-  ]
+  ],
+  console: true,
 )
 
 libfreedreno_ir3_files = files(

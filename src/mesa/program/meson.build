@@ -30,6 +30,7 @@ mesa_lex = custom_target(
   input : 'program_lexer.l',
   output : 'lex.yy.c',
   command : [prog_flex, '-o', '@OUTPUT@', '@INPUT@'],
+  console: true,
 )
 
 program_parse_tab = custom_target(
@@ -37,4 +38,5 @@ program_parse_tab = custom_target(
   input : 'program_parse.y',
   output : ['program_parse.tab.c', 'program_parse.tab.h'],
   command : bison_command,
+  console: true,
 )

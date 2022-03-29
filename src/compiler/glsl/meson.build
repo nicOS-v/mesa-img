@@ -37,7 +37,8 @@ glsl_parser = custom_target(
   'glsl_parser',
   input : 'glsl_parser.yy',
   output : ['glsl_parser.cpp', 'glsl_parser.h'],
-  command : bison_command
+  command : bison_command,
+  console: true,
 )
 
 glsl_lexer_cpp = custom_target(
@@ -45,6 +46,7 @@ glsl_lexer_cpp = custom_target(
   input : 'glsl_lexer.ll',
   output : 'glsl_lexer.cpp',
   command : [prog_flex_cpp, '-o', '@OUTPUT@', '@INPUT@'],
+  console: true,
 )
 
 ir_expression_operation_constant_h = custom_target(

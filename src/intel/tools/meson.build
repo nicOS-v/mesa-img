@@ -178,14 +178,16 @@ i965_gram_tab = custom_target(
   'i965_gram.tab.[ch]',
   input : 'i965_gram.y',
   output : ['i965_gram.tab.c', 'i965_gram.tab.h'],
-  command : bison_command
+  command : bison_command,
+  console: true,
 )
 
 i965_lex_yy_c = custom_target(
   'i965_lex.yy.c',
   input : 'i965_lex.l',
   output : 'i965_lex.yy.c',
-  command : [prog_flex, '-o', '@OUTPUT@', '@INPUT@']
+  command : [prog_flex, '-o', '@OUTPUT@', '@INPUT@'],
+  console: true,
 )
 
 i965_asm = executable(

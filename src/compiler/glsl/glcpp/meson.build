@@ -35,7 +35,8 @@ glcpp_parse = custom_target(
   'glcpp-parse.[ch]',
   input : 'glcpp-parse.y',
   output : ['glcpp-parse.c', 'glcpp-parse.h'],
-  command : bison_command
+  command : bison_command,
+  console: true,
 )
 
 glcpp_lex = custom_target(
@@ -43,6 +44,7 @@ glcpp_lex = custom_target(
   input : 'glcpp-lex.l',
   output : 'glcpp-lex.c',
   command : [prog_flex, '-o', '@OUTPUT@', '@INPUT@'],
+  console: true,
 )
 
 _extra_args = []
