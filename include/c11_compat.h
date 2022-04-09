@@ -40,4 +40,19 @@
 #  endif
 #endif
 
+#ifndef _Noreturn
+#  if defined(__cplusplus_version) && (__cplusplus_version >= 201103L)
+     /* C++11 and upper */
+#    define _Noreturn [[noreturn]]
+#  elif defined(_MSC_VER)
+#    define _Noreturn __declspec(noreturn)
+#  elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+     /* Assume other compilers always have keyword _Noreturn when support c11 */
+#  elif defined HAVE_FUNC_ATTRIBUTE_NORETURN
+#    define _Noreturn __attribute__((__noreturn__))
+#  else
+#    define _Noreturn
+#  endif
+#endif /* _Noreturn */
+
 #endif /* _C11_COMPAT_H_ */
