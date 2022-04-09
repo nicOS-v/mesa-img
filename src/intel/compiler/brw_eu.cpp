@@ -38,6 +38,7 @@
 #include "brw_gfx_ver_enum.h"
 #include "dev/intel_debug.h"
 
+#include "c11/threads.h"
 #include "util/ralloc.h"
 
 /* Returns a conditional modifier that negates the condition. */
@@ -745,8 +746,8 @@ lookup_opcode_desc(gfx_ver *index_ver,
 const struct opcode_desc *
 brw_opcode_desc(const struct intel_device_info *devinfo, enum opcode opcode)
 {
-   static __thread gfx_ver index_ver = {};
-   static __thread const opcode_desc *index_descs[NUM_BRW_OPCODES];
+   static thread_local gfx_ver index_ver = {};
+   static thread_local const opcode_desc *index_descs[NUM_BRW_OPCODES];
    return lookup_opcode_desc(&index_ver, index_descs, ARRAY_SIZE(index_descs),
                              &opcode_desc::ir, devinfo, opcode);
 }
@@ -758,8 +759,8 @@ brw_opcode_desc(const struct intel_device_info *devinfo, enum opcode opcode)
 const struct opcode_desc *
 brw_opcode_desc_from_hw(const struct intel_device_info *devinfo, unsigned hw)
 {
-   static __thread gfx_ver index_ver = {};
-   static __thread const opcode_desc *index_descs[128];
+   static thread_local gfx_ver index_ver = {};
+   static thread_local const opcode_desc *index_descs[128];
    return lookup_opcode_desc(&index_ver, index_descs, ARRAY_SIZE(index_descs),
                              &opcode_desc::hw, devinfo, hw);
 }

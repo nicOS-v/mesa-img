@@ -33,6 +33,18 @@
 #include "c11/assert.h"
 #include "c11/time.h"
 
+/*---------------------------- macros ---------------------------*/
+
+#if !defined(__cplusplus_version) || __cplusplus_version < 201103L
+   /*
+    * C11 thread_local() macro
+    * C++11 and above already predefined thread_local
+    */
+#  ifndef thread_local
+#    define thread_local _Thread_local
+#  endif
+#endif
+
 /*---------------------------- types ----------------------------*/
 typedef void (*tss_dtor_t)(void*);
 typedef int (*thrd_start_t)(void*);
