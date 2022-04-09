@@ -25,10 +25,10 @@
 #define UTIL_MACROS_H
 
 #include <stdio.h>
-#include <assert.h>
 
 #include "c99_compat.h"
 #include "c11_compat.h"
+#include "c11/assert.h"
 
 #include <stdint.h>
 

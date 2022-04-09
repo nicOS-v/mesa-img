@@ -30,6 +30,7 @@
 #define EMULATED_THREADS_H_INCLUDED_
 
 #include "c99_compat.h" /* for `inline` */
+#include "c11/assert.h"
 #include "c11/time.h"
 
 /*---------------------------- types ----------------------------*/

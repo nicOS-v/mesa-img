@@ -27,9 +27,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <stdlib.h>
-#ifndef assert
-#include <assert.h>
-#endif
 #include <limits.h>
 #include <errno.h>
 #include <unistd.h>

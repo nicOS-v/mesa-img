@@ -6,22 +6,23 @@
 #ifndef _C11_COMPAT_H_
 #define _C11_COMPAT_H_
 
-#if defined(__cplusplus)
-   /* This is C++ code, not C */
-#elif (__STDC_VERSION__ >= 201112L)
-   /* Already C11 */
-#else
-
-
-/*
- * C11 static_assert() macro
- * assert.h only defines that name for C11 and above
- */
-#ifndef static_assert
-#define static_assert _Static_assert
+# ifdef _MSC_VER
+#  include <crtdbg.h> /* For _STATIC_ASSERT */
 #endif
 
+#include "c99_compat.h"
 
-#endif /* !C++ && !C11 */
+#if !defined(_Static_assert)
+#  if defined(__cplusplus_version) && (__cplusplus_version >= 201103L)
+     /* C++11 and upper have no need of _Static_assert macro */
+#  elif defined(_MSC_VER)
+#    define _Static_assert(expr, ...) _STATIC_ASSERT(expr)
+#  elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+     /* Assume other compilers always have keyword _Static_assert when support c11 */
+#  else
+     /* Also defined for cplusplus */
+#    define _Static_assert(expr, ...) typedef char __static_assert_t[(expr) != 0]
+#  endif
+#endif /* _Static_assert */
 
 #endif /* _C11_COMPAT_H_ */

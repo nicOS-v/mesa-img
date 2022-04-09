@@ -29,8 +29,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include <assert.h>
-#include "c11_compat.h"
+#include "c11/assert.h"
 #include "ac_rgp.h"
 
 struct radeon_cmdbuf;
