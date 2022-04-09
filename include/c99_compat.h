@@ -30,6 +30,13 @@
 #ifndef _C99_COMPAT_H_
 #define _C99_COMPAT_H_
 
+#if defined(__cplusplus)
+#  if defined(_MSC_VER) && defined(_MSVC_LANG)
+#    define __cplusplus_version _MSVC_LANG
+#  else
+#    define __cplusplus_version __cplusplus
+#  endif
+#endif
 
 /*
  * MSVC hacks.
@@ -69,8 +76,8 @@
  * C99 inline keyword
  */
 #ifndef inline
-#  ifdef __cplusplus
-     /* C++ supports inline keyword */
+#  if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) || defined(__cplusplus)
+     /* C99 or C++ supports inline keyword */
 #  elif defined(__GNUC__)
 #    define inline __inline__
 #  elif defined(_MSC_VER)
@@ -81,8 +88,6 @@
      /* Intel compiler supports inline keyword */
 #  elif defined(__WATCOMC__) && (__WATCOMC__ >= 1100)
 #    define inline __inline
-#  elif (__STDC_VERSION__ >= 199901L)
-     /* C99 supports inline keyword */
 #  else
 #    define inline
 #  endif
@@ -96,8 +101,8 @@
  * - http://cellperformance.beyond3d.com/articles/2006/05/demystifying-the-restrict-keyword.html
  */
 #ifndef restrict
-#  if (__STDC_VERSION__ >= 199901L) && !defined(__cplusplus)
-     /* C99 */
+#  if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) && !defined(__cplusplus)
+     /* C99 (non C++) supports restrict keyword */
 #  elif defined(__GNUC__)
 #    define restrict __restrict__
 #  elif defined(_MSC_VER)
@@ -112,8 +117,10 @@
  * C99 __func__ macro
  */
 #ifndef __func__
-#  if (__STDC_VERSION__ >= 199901L)
+#  if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
      /* C99 */
+#  elif defined(__cplusplus_version) && __cplusplus_version > 201103L
+     /* C++11 */
 #  elif defined(__GNUC__)
 #    define __func__ __FUNCTION__
 #  elif defined(_MSC_VER)
