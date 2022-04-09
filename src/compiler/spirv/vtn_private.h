@@ -85,7 +85,7 @@ void _vtn_err(struct vtn_builder *b, const char *file, unsigned line,
  * So long as these two things continue to hold, we can easily longjmp back to
  * spirv_to_nir(), clean up the builder, and return NULL.
  */
-NORETURN void
+_Noreturn void
 _vtn_fail(struct vtn_builder *b, const char *file, unsigned line,
              const char *fmt, ...) PRINTFLIKE(4, 5);
 

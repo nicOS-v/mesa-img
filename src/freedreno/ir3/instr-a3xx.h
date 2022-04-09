@@ -31,9 +31,11 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "c11_compat.h"
+
 /* clang-format off */
-void ir3_assert_handler(const char *expr, const char *file, int line,
-                        const char *func) __attribute__((weak)) __attribute__((__noreturn__));
+_Noreturn void ir3_assert_handler(const char *expr, const char *file, int line,
+                        const char *func) __attribute__((weak));
 /* clang-format on */
 
 /* A wrapper for assert() that allows overriding handling of a failed

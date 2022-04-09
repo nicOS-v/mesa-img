@@ -224,15 +224,6 @@ do {                       \
 #define ATTRIBUTE_RETURNS_NONNULL
 #endif
 
-#ifndef NORETURN
-#  ifdef _MSC_VER
-#    define NORETURN __declspec(noreturn)
-#  elif defined HAVE_FUNC_ATTRIBUTE_NORETURN
-#    define NORETURN __attribute__((__noreturn__))
-#  else
-#    define NORETURN
-#  endif
-#endif
 
 #ifdef _MSC_VER
 #define ALIGN16 __declspec(align(16))

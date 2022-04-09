@@ -204,17 +204,13 @@ debug_get_num_option(const char *name, long dfault);
 void
 debug_get_version_option(const char *name, unsigned *major, unsigned *minor);
 
-#ifdef _MSC_VER
-__declspec(noreturn)
+#if !defined(DEBUG)
+_Noreturn
 #endif
 void _debug_assert_fail(const char *expr,
                         const char *file,
                         unsigned line,
-                        const char *function)
-#if defined(__GNUC__) && !defined(DEBUG)
-   __attribute__((noreturn))
-#endif
-;
+                        const char *function);
 
 
 /**

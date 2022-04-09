@@ -113,7 +113,7 @@ intel_spec_get_gen(struct intel_spec *spec)
    return spec->gen;
 }
 
-static void __attribute__((noreturn))
+static _Noreturn void
 fail(struct location *loc, const char *msg, ...)
 {
    va_list ap;

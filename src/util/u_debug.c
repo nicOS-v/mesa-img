@@ -327,6 +327,9 @@ debug_get_flags_option(const char *name,
 }
 
 
+#if !defined(DEBUG)
+_Noreturn
+#endif
 void
 _debug_assert_fail(const char *expr, const char *file, unsigned line,
                    const char *function)

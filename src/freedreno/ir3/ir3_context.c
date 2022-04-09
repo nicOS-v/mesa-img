@@ -391,7 +391,7 @@ ir3_split_dest(struct ir3_block *block, struct ir3_instruction **dst,
    }
 }
 
-NORETURN void
+_Noreturn void
 ir3_context_error(struct ir3_context *ctx, const char *format, ...)
 {
    struct hash_table *errors = NULL;

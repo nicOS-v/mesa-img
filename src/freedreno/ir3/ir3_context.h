@@ -228,7 +228,7 @@ void emit_intrinsic_image_size_tex(struct ir3_context *ctx,
       ir3_create_collect(block, __arr, ARRAY_SIZE(__arr));                     \
    })
 
-NORETURN void ir3_context_error(struct ir3_context *ctx, const char *format,
+_Noreturn void ir3_context_error(struct ir3_context *ctx, const char *format,
                                 ...);
 
 #define compile_assert(ctx, cond)                                              \

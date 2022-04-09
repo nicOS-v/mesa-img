@@ -139,7 +139,7 @@ v3d_spec_find_enum(struct v3d_spec *spec, const char *name)
 
 #ifdef WITH_LIBEXPAT
 
-static void __attribute__((noreturn))
+static _Noreturn void
 fail(struct location *loc, const char *msg, ...)
 {
         va_list ap;

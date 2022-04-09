@@ -39,7 +39,7 @@
 extern "C" {
 #endif
 
-static inline void PRINTFLIKE(2, 3) NORETURN
+static inline _Noreturn void PRINTFLIKE(2, 3)
 _fail(const char *prefix, const char *format, ...)
 {
    va_list args;

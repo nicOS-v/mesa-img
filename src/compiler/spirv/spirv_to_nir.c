@@ -178,7 +178,7 @@ _vtn_err(struct vtn_builder *b, const char *file, unsigned line,
    va_end(args);
 }
 
-void
+_Noreturn void
 _vtn_fail(struct vtn_builder *b, const char *file, unsigned line,
           const char *fmt, ...)
 {
