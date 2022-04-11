@@ -6,7 +6,7 @@ $env:PYTHONUTF8=1
 
 Get-Date
 Write-Host "Compiling Mesa"
-$builddir = New-Item -Force -ItemType Directory -Name "_build"
+$builddir = New-Item -Force -ItemType Directory -Name "..\_build"
 $installdir = New-Item -Force -ItemType Directory -Name "_install"
 $builddir=$builddir.FullName
 $installdir=$installdir.FullName
