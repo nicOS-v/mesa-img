@@ -52,6 +52,17 @@ public:
    void *mem_ctx;
    gl_context ctx;
    exec_list ir;
+#ifdef _WIN32
+   void* operator new(size_t i)
+   {
+      return _mm_malloc(i,16);
+   }
+
+   void operator delete(void* p)
+   {
+      _mm_free(p);
+   }
+#endif
 };
 
 void
