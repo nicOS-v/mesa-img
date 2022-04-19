@@ -81,13 +81,22 @@ static void impl_tss_dtor_invoke(void);  // forward decl.
 struct impl_thrd_param {
     thrd_start_t func;
     void *arg;
+    thrd_t thrd;
 };
+
+static thread_local HANDLE impl_current_thread = NULL;
 
 static unsigned __stdcall impl_thrd_routine(void *p)
 {
+    struct impl_thrd_param *pack_p = (struct impl_thrd_param *)p;
     struct impl_thrd_param pack;
     int code;
-    memcpy(&pack, p, sizeof(struct impl_thrd_param));
+    while (pack_p->thrd == NULL)
+    {
+        SwitchToThread();
+    }
+    impl_current_thread = pack_p->thrd;
+    memcpy(&pack, pack_p, sizeof(struct impl_thrd_param));
     free(p);
     code = pack.func(pack.arg);
     impl_tss_dtor_invoke();
@@ -324,17 +333,22 @@ thrd_create(thrd_t *thr, thrd_start_t func, void *arg)
         return thrd_error;
     }
     *thr = (thrd_t)handle;
+    pack->thrd = (void *)handle;
     return thrd_success;
 }
 
-#if 0
 // 7.25.5.2
-static inline thrd_t
+thrd_t
 thrd_current(void)
 {
-    HANDLE hCurrentThread;
-    BOOL bRet;
+    HANDLE hCurrentThread = NULL;
+    BOOL bRet = FALSE;
+    if (impl_current_thread != NULL)
+    {
+        return impl_current_thread;
+    }
 
+    /* Must be main thraed */
     /* GetCurrentThread() returns a pseudo-handle, which we need
      * to pass to DuplicateHandle(). Only the resulting handle can be used
      * from other threads.
@@ -343,14 +357,8 @@ thrd_current(void)
      * Only the thread IDs - as returned by GetThreadId() and GetCurrentThreadId()
      * can be compared directly.
      *
-     * Other potential solutions would be:
-     * - define thrd_t as a thread Ids, but this would mean we'd need to OpenThread for many operations
-     * - use malloc'ed memory for thrd_t. This would imply using TLS for current thread.
-     *
-     * Neither is particularly nice.
-     *
-     * Life would be much easier if C11 threads had different abstractions for
-     * threads and thread IDs, just like C++11 threads does...
+     * As impl_current_thread are thread local variable, so we just need call
+     * DuplicateHandle for a single time.
      */
 
     bRet = DuplicateHandle(GetCurrentProcess(), // source process (pseudo) handle
@@ -360,13 +368,13 @@ thrd_current(void)
                            0,
                            FALSE,
                            DUPLICATE_SAME_ACCESS);
-    assert(bRet);
-    if (!bRet) {
-	hCurrentThread = GetCurrentThread();
+    if (!bRet)
+    {
+        hCurrentThread = GetCurrentThread();
     }
-    return hCurrentThread;
+    impl_current_thread = hCurrentThread;
+    return impl_current_thread;
 }
-#endif
 
 // 7.25.5.3
 int
