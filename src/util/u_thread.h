@@ -216,20 +216,9 @@ util_set_current_thread_affinity(const uint32_t *mask,
                                  uint32_t *old_mask,
                                  unsigned num_mask_bits)
 {
-#if defined(HAVE_PTHREAD_SETAFFINITY)
-   return util_set_thread_affinity(pthread_self(), mask, old_mask,
+   return util_set_thread_affinity(thrd_current(), mask, old_mask,
                                    num_mask_bits);
-
-#elif defined(_WIN32) && !defined(__CYGWIN__)
-   /* The GetCurrentThreadId() handle is only valid within the current thread. */
-   return util_set_thread_affinity(GetCurrentThread(), mask, old_mask,
-                                   num_mask_bits);
-
-#else
-   return false;
-#endif
 }
-
 
 /*
  * Thread statistics.
