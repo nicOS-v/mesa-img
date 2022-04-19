@@ -270,10 +270,7 @@ util_current_thread_get_time_nano(void)
 
 static inline bool u_thread_is_self(thrd_t thread)
 {
-#if defined(HAVE_PTHREAD)
-   return pthread_equal(pthread_self(), thread);
-#endif
-   return false;
+   return thrd_equal(thrd_current(), thread);
 }
 
 /*
