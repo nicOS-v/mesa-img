@@ -388,7 +388,7 @@ thrd_detach(thrd_t thr)
 int
 thrd_equal(thrd_t thr0, thrd_t thr1)
 {
-    return GetThreadId(thr0) == GetThreadId(thr1);
+    return thr0 == thr1;
 }
 
 // 7.25.5.5
