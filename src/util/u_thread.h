@@ -245,16 +245,7 @@ util_thread_get_time_nano(thrd_t thread)
 static inline int64_t
 util_current_thread_get_time_nano(void)
 {
-#if defined(HAVE_PTHREAD)
-   return util_thread_get_time_nano(pthread_self());
-
-#elif defined(_WIN32) && !defined(__CYGWIN__)
-   /* The GetCurrentThreadId() handle is only valid within the current thread. */
-   return util_thread_get_time_nano(GetCurrentThread());
-
-#else
-   return 0;
-#endif
+   return util_thread_get_time_nano(thrd_current());
 }
 
 static inline bool u_thread_is_self(thrd_t thread)
