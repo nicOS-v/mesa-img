@@ -48,7 +48,7 @@ glcpp_lex = custom_target(
 )
 
 _extra_args = []
-if cpp.get_id() == 'msvc'
+if cpp.get_argument_syntax() == 'msvc'
   # Flex relies on __STDC_VERSION__>=199901L to decide when to include C99
   # inttypes.h.  We always have inttypes.h available with MSVC (either the one
   # bundled with MSVC 2013, or the one we bundle ourselves), but we can't just
