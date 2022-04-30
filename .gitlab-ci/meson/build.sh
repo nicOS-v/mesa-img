@@ -3,6 +3,8 @@
 set -e
 set -o xtrace
 
+export
+
 CROSS_FILE=/cross_file-"$CROSS".txt
 
 # We need to control the version of llvm-config we're using, so we'll
