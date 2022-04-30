@@ -27,6 +27,7 @@
 #include "shader_enums.h"
 #include "spirv/nir_spirv.h"
 #include "util/blob.h"
+#include "util/macros.h"
 
 #include "git_sha1.h"
 #include "vulkan/vulkan.h"
@@ -526,6 +527,15 @@ spirv_to_dxil(const uint32_t *words, size_t word_count,
               const struct dxil_spirv_runtime_conf *conf,
               struct dxil_spirv_object *out_dxil)
 {
+   STATIC_ASSERT(DXIL_SPIRV_SHADER_NONE == (int)MESA_SHADER_NONE);
+   STATIC_ASSERT(DXIL_SPIRV_SHADER_VERTEX == (int)MESA_SHADER_VERTEX);
+   STATIC_ASSERT(DXIL_SPIRV_SHADER_TESS_CTRL == (int)MESA_SHADER_TESS_CTRL);
+   STATIC_ASSERT(DXIL_SPIRV_SHADER_TESS_EVAL == (int)MESA_SHADER_TESS_EVAL);
+   STATIC_ASSERT(DXIL_SPIRV_SHADER_GEOMETRY == (int)MESA_SHADER_GEOMETRY);
+   STATIC_ASSERT(DXIL_SPIRV_SHADER_FRAGMENT == (int)MESA_SHADER_FRAGMENT);
+   STATIC_ASSERT(DXIL_SPIRV_SHADER_COMPUTE == (int)MESA_SHADER_COMPUTE);
+   STATIC_ASSERT(DXIL_SPIRV_SHADER_KERNEL == (int)MESA_SHADER_KERNEL);
+
    if (stage == MESA_SHADER_NONE || stage == MESA_SHADER_KERNEL)
       return false;
 
