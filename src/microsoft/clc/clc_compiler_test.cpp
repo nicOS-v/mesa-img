@@ -38,6 +38,7 @@
 
 using std::vector;
 
+#if !defined(COMPUTE_TEST_SECTION) || COMPUTE_TEST_SECTION == 0
 TEST_F(ComputeTest, runtime_memcpy)
 {
    struct shift { uint8_t val; uint8_t shift; uint16_t ret; };
@@ -635,7 +636,9 @@ TEST_F(ComputeTest, complex_types_local_array)
    for (int i = 0; i < inout.size(); ++i)
       EXPECT_EQ(inout[i], expected[i]);
 }
+#endif
 
+#if !defined(COMPUTE_TEST_SECTION) || COMPUTE_TEST_SECTION == 1
 TEST_F(ComputeTest, complex_types_global_struct_array)
 {
    struct two_vals { uint32_t add; uint32_t mul; };
@@ -1157,7 +1160,9 @@ TEST_F(ComputeTest, frexp_ret)
    for (int i = 0; i < inout.size(); ++i)
       EXPECT_FLOAT_EQ(inout[i], expected[i]);
 }
+#endif
 
+#if !defined(COMPUTE_TEST_SECTION) || COMPUTE_TEST_SECTION == 2
 TEST_F(ComputeTest, frexp_exp)
 {
    const char *kernel_source =
@@ -1506,7 +1511,9 @@ TEST_F(ComputeTest, localvar_uchar2)
    for (int i = 0; i < inout.size(); ++i)
       EXPECT_EQ(inout[i], expected[i]);
 }
+#endif
 
+#if !defined(COMPUTE_TEST_SECTION) || COMPUTE_TEST_SECTION == 3
 TEST_F(ComputeTest, work_group_size_hint)
 {
    const char *kernel_source =
@@ -1743,7 +1750,9 @@ TEST_F(ComputeTest, DISABLED_debug_layer_failure)
    for (int i = 0; i < inout.size(); ++i)
       EXPECT_FLOAT_EQ(inout[i], expected[i]);
 }
+#endif
 
+#if !defined(COMPUTE_TEST_SECTION) || COMPUTE_TEST_SECTION ==4
 TEST_F(ComputeTest, compiler_defines)
 {
    const char *kernel_source =
@@ -2341,3 +2350,4 @@ TEST_F(ComputeTest, arg_metadata)
    EXPECT_EQ(shader.metadata->kernels[0].args[5].address_qualifier, CLC_KERNEL_ARG_ADDRESS_CONSTANT);
    EXPECT_EQ(shader.metadata->kernels[0].args[5].type_qualifier, CLC_KERNEL_ARG_TYPE_CONST);
 }
+#endif

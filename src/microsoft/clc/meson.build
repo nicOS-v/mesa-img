@@ -34,17 +34,27 @@ libclc_compiler = shared_library(
 )
 
 if dep_dxheaders.found()
-  clc_compiler_test = executable('clc_compiler_test',
-    ['clc_compiler_test.cpp', 'compute_test.cpp'],
-    link_with : [libclc_compiler],
+  libcompute_test = static_library(
+    'compute_test',
+    ['compute_test.cpp'],
     dependencies : [idep_gtest, idep_mesautil, idep_libdxil_compiler, dep_dxheaders,
                     dep_spirv_tools],
     override_options : dep_dxheaders_override_options,
     include_directories : [inc_include, inc_src, inc_compiler, inc_spirv],
   )
-
-  if build_machine.system() == 'windows'
-    test('clc_compiler_test', clc_compiler_test, timeout: 180, protocol : gtest_test_protocol)
-  endif
+  foreach section : ['0', '1', '2', '3', '4']
+    clc_compiler_test = executable('clc_compiler_test' + section,
+      ['clc_compiler_test.cpp'],
+      link_with : [libclc_compiler, libcompute_test],
+      cpp_args: ['-DCOMPUTE_TEST_SECTION=' + section],
+      dependencies : [idep_gtest, idep_mesautil, idep_libdxil_compiler, dep_dxheaders,
+                    dep_spirv_tools],
+      override_options : dep_dxheaders_override_options,
+      include_directories : [inc_include, inc_src, inc_compiler, inc_spirv],
+    )
+    if build_machine.system() == 'windows'
+      test('clc_compiler_test' + section , clc_compiler_test, timeout: 60, protocol : gtest_test_protocol)
+    endif
+  endforeach
 
 endif
