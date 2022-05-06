@@ -676,7 +676,7 @@ if with_microsoft_clc or with_gallium_d3d12 or with_spirv_to_dxil or with_micros
   dep_dxheaders = dependency('directx-headers', required : false)
   if not dep_dxheaders.found()
     dep_dxheaders = dependency('DirectX-Headers', fallback : ['DirectX-Headers', 'dep_dxheaders'],
-      required : with_gallium_d3d12 or with_microsoft_vk
+      required : true
     )
   endif
 endif
