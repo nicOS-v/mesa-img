@@ -12,6 +12,16 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "detect_os.h"
+
+#if DETECT_OS_WINDOWS
+#include <io.h> /* close */
+#endif
+
+#if DETECT_OS_UNIX
+#include <unistd.h> /* close */
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

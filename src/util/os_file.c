@@ -12,14 +12,14 @@
 #include <sys/stat.h>
 
 #if DETECT_OS_WINDOWS
-#include <io.h>
 #define open _open
 #define fdopen _fdopen
 #define O_CREAT _O_CREAT
 #define O_EXCL _O_EXCL
 #define O_WRONLY _O_WRONLY
-#else
-#include <unistd.h>
+#endif
+
+#if DETECT_OS_UNIX
 #ifndef F_DUPFD_CLOEXEC
 #define F_DUPFD_CLOEXEC 1030
 #endif
@@ -194,7 +194,6 @@ os_read_file(const char *filename, size_t *size)
 #if DETECT_OS_LINUX
 
 #include <sys/syscall.h>
-#include <unistd.h>
 
 /* copied from <linux/kcmp.h> */
 #define KCMP_FILE 0
