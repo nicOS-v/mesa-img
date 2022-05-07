@@ -39,6 +39,7 @@
 using std::vector;
 
 #if !defined(COMPUTE_TEST_SECTION) || COMPUTE_TEST_SECTION == 0
+#if 0
 TEST_F(ComputeTest, runtime_memcpy)
 {
    struct shift { uint8_t val; uint8_t shift; uint16_t ret; };
@@ -65,6 +66,7 @@ TEST_F(ComputeTest, runtime_memcpy)
    for (int i = 0; i < inout.size(); ++i)
       EXPECT_EQ(inout[i].ret, expected[i]);
 }
+#endif
 
 TEST_F(ComputeTest, two_global_arrays)
 {
@@ -295,6 +297,7 @@ TEST_F(ComputeTest, ret_local_ptr)
    }
 }
 
+#if 0
 TEST_F(ComputeTest, ret_private_ptr)
 {
    struct s { uint64_t ptr; uint32_t value; };
@@ -320,6 +323,7 @@ TEST_F(ComputeTest, ret_private_ptr)
       EXPECT_EQ(out[i].ptr, expected_ptr[i]);
    }
 }
+#endif
 
 TEST_F(ComputeTest, globals_8bit)
 {
