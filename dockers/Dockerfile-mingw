@@ -1,0 +1,12 @@
+FROM debian_base:latest
+COPY container/debian/ .gitlab-ci/container/debian/
+RUN /bin/bash .gitlab-ci/container/debian/x86_build-mingw.sh
+
+# cd .gitlab-ci
+# docker build -f ../dockers/Dockerfile-mingw . --tag debian_mingw
+# docker run -it --rm debian_mingw:latest bash
+# docker run -it --rm -v $PWD:$PWD -w $PWD debian_mingw:latest bash
+# cd subprojects/llvm-project/build
+# ninja install
+
+# docker rm $(docker ps -a -f status=exited -q)

@@ -1,0 +1,18 @@
+FROM debian:bullseye
+RUN mkdir /.gitlab-ci
+COPY . /.gitlab-ci/
+ENV APT_MIRROR=mirror.nju.edu.cn
+RUN /bin/bash .gitlab-ci/container/debian/x86_build-base-init.sh
+ENV WINEPATH="c:/windows;c:/windows/system32;/usr/x86_64-w64-mingw32/bin;/usr/x86_64-w64-mingw32/lib;/usr/lib/gcc/x86_64-w64-mingw32/10-posix"
+RUN /bin/bash .gitlab-ci/container/debian/x86_build-base-wine.sh
+
+RUN echo "#!/bin/bash" > .gitlab-ci/container/debian/x86_build-base-wine.sh
+RUN /bin/bash .gitlab-ci/container/debian/x86_build-base.sh
+
+# cd .gitlab-ci
+# docker build -f ../dockers/Dockerfile-base . --tag debian_base
+# docker run -it --rm debian_base:latest bash
+# docker run -it --rm -v $PWD:$PWD -w $PWD debian_base:latest bash
+# cd subprojects/llvm-project/build
+
+# docker rm $(docker ps -a -f status=exited -q)
