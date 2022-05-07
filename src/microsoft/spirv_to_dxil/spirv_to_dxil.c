@@ -483,9 +483,6 @@ static bool
 fix_sample_mask_type(struct nir_builder *builder, nir_instr *instr,
                      void *cb_data)
 {
-   struct dxil_spirv_runtime_conf *conf =
-      (struct dxil_spirv_runtime_conf *)cb_data;
-
    if (instr->type != nir_instr_type_deref)
       return false;
 
@@ -536,7 +533,7 @@ spirv_to_dxil(const uint32_t *words, size_t word_count,
    STATIC_ASSERT(DXIL_SPIRV_SHADER_COMPUTE == (int)MESA_SHADER_COMPUTE);
    STATIC_ASSERT(DXIL_SPIRV_SHADER_KERNEL == (int)MESA_SHADER_KERNEL);
 
-   if (stage == MESA_SHADER_NONE || stage == MESA_SHADER_KERNEL)
+   if (stage == DXIL_SPIRV_SHADER_NONE || stage == DXIL_SPIRV_SHADER_KERNEL)
       return false;
 
    struct spirv_to_nir_options spirv_opts = {
@@ -583,7 +580,7 @@ spirv_to_dxil(const uint32_t *words, size_t word_count,
 
    // Force sample-rate shading if we're asked to.
    if (conf->force_sample_rate_shading) {
-      assert(stage == MESA_SHADER_FRAGMENT);
+      assert(stage == DXIL_SPIRV_SHADER_FRAGMENT);
       nir_foreach_shader_in_variable(var, nir)
          var->data.sample = true;
    }
@@ -609,7 +606,7 @@ spirv_to_dxil(const uint32_t *words, size_t word_count,
             conf->runtime_data_cbv.register_space,
             conf->runtime_data_cbv.base_shader_register);
 
-   if (stage == MESA_SHADER_FRAGMENT) {
+   if (stage == DXIL_SPIRV_SHADER_FRAGMENT) {
       NIR_PASS_V(nir, nir_lower_input_attachments,
                  &(nir_input_attachment_options){
                      .use_fragcoord_sysval = false,
@@ -684,7 +681,7 @@ spirv_to_dxil(const uint32_t *words, size_t word_count,
 
 
    if (conf->yz_flip.mode != DXIL_SPIRV_YZ_FLIP_NONE) {
-      assert(stage == MESA_SHADER_VERTEX || stage == MESA_SHADER_GEOMETRY);
+      assert(stage == DXIL_SPIRV_SHADER_VERTEX || stage == DXIL_SPIRV_SHADER_GEOMETRY);
       NIR_PASS_V(nir,
                  dxil_spirv_nir_lower_yz_flip,
                  conf, &requires_runtime_data);
@@ -748,7 +745,7 @@ spirv_to_dxil(const uint32_t *words, size_t word_count,
    nir->info.inputs_read =
       dxil_reassign_driver_locations(nir, nir_var_shader_in, 0);
 
-   if (stage != MESA_SHADER_FRAGMENT) {
+   if (stage != DXIL_SPIRV_SHADER_FRAGMENT) {
       nir->info.outputs_written =
          dxil_reassign_driver_locations(nir, nir_var_shader_out, 0);
    } else {
