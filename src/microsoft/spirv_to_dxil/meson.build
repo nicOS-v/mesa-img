@@ -19,6 +19,9 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
+c_args_spirv_to_dxil = []
+c_args_spirv_to_dxil += cc.get_supported_arguments(['-Wno-maybe-uninitialized'])
+
 libspirv_to_dxil = both_libraries(
   'spirv_to_dxil',
   [
@@ -30,6 +33,7 @@ libspirv_to_dxil = both_libraries(
   ],
   vs_module_defs : 'spirv_to_dxil.def',
   dependencies : [idep_nir, idep_libdxil_compiler],
+  c_args: c_args_spirv_to_dxil,
   include_directories : [inc_include, inc_src, inc_compiler, inc_gallium],
   install : true,
 )
