@@ -78,7 +78,7 @@ static const struct clc_logger logger = {
 void
 ComputeTest::enable_d3d12_debug_layer()
 {
-   HMODULE hD3D12Mod = LoadLibrary("D3D12.DLL");
+   HMODULE hD3D12Mod = LoadLibraryA("D3D12.DLL");
    if (!hD3D12Mod) {
       fprintf(stderr, "D3D12: failed to load D3D12.DLL\n");
       return;
@@ -113,7 +113,7 @@ ComputeTest::get_dxgi_factory()
                                                      void **ppFactory);
    PFN_CREATE_DXGI_FACTORY CreateDXGIFactory;
 
-   HMODULE hDXGIMod = LoadLibrary("DXGI.DLL");
+   HMODULE hDXGIMod = LoadLibraryA("DXGI.DLL");
    if (!hDXGIMod)
       throw runtime_error("Failed to load DXGI.DLL");
 
@@ -156,7 +156,7 @@ ComputeTest::create_device(IDXGIAdapter1 *adapter)
    typedef HRESULT(WINAPI *PFN_D3D12CREATEDEVICE)(IUnknown *, D3D_FEATURE_LEVEL, REFIID, void **);
    PFN_D3D12CREATEDEVICE D3D12CreateDevice;
 
-   HMODULE hD3D12Mod = LoadLibrary("D3D12.DLL");
+   HMODULE hD3D12Mod = LoadLibraryA("D3D12.DLL");
    if (!hD3D12Mod)
       throw runtime_error("failed to load D3D12.DLL");
 
@@ -429,7 +429,7 @@ ComputeTest::run_shader_with_raw_args(Shader shader,
    if (args.size() < 1)
       throw runtime_error("no inputs");
 
-   static HMODULE hD3D12Mod = LoadLibrary("D3D12.DLL");
+   static HMODULE hD3D12Mod = LoadLibraryA("D3D12.DLL");
    if (!hD3D12Mod)
       throw runtime_error("Failed to load D3D12.DLL");
 
