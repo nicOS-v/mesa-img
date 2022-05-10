@@ -72,10 +72,10 @@ cd shader-db
 make
 popd
 
-git clone https://github.com/microsoft/DirectX-Headers -b main
+git clone https://github.com/lygstate/DirectX-Headers -b main
 mkdir -p DirectX-Headers/build
 pushd DirectX-Headers/build
-git reset --hard 9ebf853db71f1a8f5430b7dedfd8140aaa95d17f
+git reset --hard 4b0de868b85d971a39aa2a7f15f71d7b4fe0c788
 meson .. --backend=ninja --buildtype=release -Dbuild-test=false
 ninja
 ninja install
