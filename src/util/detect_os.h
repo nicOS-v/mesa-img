@@ -67,7 +67,7 @@
 #define DETECT_OS_UNIX 1
 #endif
 
-#if defined(_WIN32) || defined(WIN32)
+#if !defined(__CYGWIN__) && (defined(_WIN32) || defined(WIN32))
 #define DETECT_OS_WINDOWS 1
 #endif
 
