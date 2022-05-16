@@ -54,7 +54,7 @@ init_dt_type(struct kopper_displaytarget *cdt)
     default:
        unreachable("unsupported!");
     }
-#ifdef WIN32
+#if DETECT_OS_WINDOWS
     // not hooked up yet so let's not sabotage benchmarks
     cdt->present_mode = VK_PRESENT_MODE_IMMEDIATE_KHR;
 #else
