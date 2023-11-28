@@ -183,11 +183,11 @@ if dri_drivers.contains('auto')
   if system_has_kms_drm
     # TODO: PPC, Sparc
     if ['x86', 'x86_64'].contains(host_machine.cpu_family())
-      dri_drivers = ['i915', 'i965', 'r100', 'r200', 'nouveau', 'pvr']
+      dri_drivers = ['i915', 'i965', 'r100', 'r200', 'nouveau']
     elif ['arm', 'aarch64'].contains(host_machine.cpu_family())
-      dri_drivers = ['pvr']
+      dri_drivers = []
     elif ['mips', 'mips64', 'riscv32', 'riscv64'].contains(host_machine.cpu_family())
-      dri_drivers = ['r100', 'r200', 'nouveau', 'pvr']
+      dri_drivers = ['r100', 'r200', 'nouveau']
     else
       error('Unknown architecture @0@. Please pass -Ddri-drivers to set driver options. Patches gladly accepted to fix this.'.format(
             host_machine.cpu_family()))
@@ -219,16 +219,16 @@ if gallium_drivers.contains('auto')
     if ['x86', 'x86_64'].contains(host_machine.cpu_family())
       gallium_drivers = [
         'r300', 'r600', 'radeonsi', 'nouveau', 'virgl', 'svga', 'swrast',
-        'iris', 'crocus'
++       'iris', 'crocus', 'pvr'
       ]
     elif ['arm', 'aarch64'].contains(host_machine.cpu_family())
       gallium_drivers = [
         'v3d', 'vc4', 'freedreno', 'etnaviv', 'nouveau',
-        'tegra', 'virgl', 'lima', 'panfrost', 'swrast'
+        'tegra', 'virgl', 'lima', 'panfrost', 'swrast', 'pvr'
       ]
     elif ['mips', 'mips64', 'riscv32', 'riscv64'].contains(host_machine.cpu_family())
       gallium_drivers = [
-        'r300', 'r600', 'radeonsi', 'nouveau', 'virgl', 'swrast'
+        'r300', 'r600', 'radeonsi', 'nouveau', 'virgl', 'swrast', 'pvr'
       ]
     else
       error('Unknown architecture @0@. Please pass -Dgallium-drivers to set driver options. Patches gladly accepted to fix this.'.format(
@@ -262,9 +262,22 @@ with_gallium_lima = gallium_drivers.contains('lima')
 with_gallium_zink = gallium_drivers.contains('zink')
 with_gallium_d3d12 = gallium_drivers.contains('d3d12')
 with_gallium_asahi = gallium_drivers.contains('asahi')
+with_gallium_pvr = gallium_drivers.contains('pvr')
 
 with_gallium = gallium_drivers.length() != 0
 with_gallium_kmsro = with_gallium_v3d or with_gallium_vc4 or with_gallium_etnaviv or with_gallium_panfrost or with_gallium_lima or with_gallium_freedreno
+
+if with_gallium_pvr
+  gallium_pvr_alias = get_option('gallium-pvr-alias')
+  if gallium_pvr_alias == 'pvr'
+    gallium_pvr_alias = ''
+  endif
+  with_gallium_pvr_alias = gallium_pvr_alias != ''
+else
+  gallium_pvr_alias = ''
+  with_gallium_pvr_alias = false
+endif
+
 
 if with_gallium and system_has_kms_drm
   _glx = get_option('glx')
@@ -1009,7 +1022,6 @@ endif
 if with_platform_haiku
   pre_args += '-DHAVE_HAIKU_PLATFORM'
 endif
-
 if with_platform_tizen
   dep_dlog = dependency('dlog')
   dep_tizen = [
@@ -1019,7 +1031,6 @@ if with_platform_tizen
   ]
   pre_args += '-DHAVE_TIZEN_PLATFORM'
 endif
-
 
 prog_python = import('python').find_installation('python3')
 has_mako = run_command(
@@ -1613,8 +1624,8 @@ _drm_amdgpu_ver = '2.4.107'
 _drm_radeon_ver = '2.4.71'
 _drm_nouveau_ver = '2.4.102'
 _drm_intel_ver = '2.4.75'
-_drm_pvr_ver = '2.4.60'
 _drm_ver = '2.4.81'
+_drm_pvr_ver = '2.4.60'
 
 _libdrm_checks = [
   ['intel', with_dri_i915 or with_gallium_i915, true],
@@ -1664,7 +1675,7 @@ with_gallium_drisw_kms = false
 dep_libdrm = dependency(
   'libdrm', version : '>=' + _drm_ver,
   # GNU/Hurd includes egl_dri2, without drm.
-    required : (with_dri2 and host_machine.system() != 'gnu') or with_dri3 or
+  required : (with_dri2 and host_machine.system() != 'gnu') or with_dri3 or
              with_platform_tizen
 )
 if dep_libdrm.found()
@@ -2314,12 +2325,15 @@ if with_egl
   lines += 'EGL drivers:     ' + ' '.join(egl_drivers)
 endif
 if with_egl or with_any_vk
- if not with_platform_tizen
+
+  if not with_platform_tizen
     _platforms += 'surfaceless'
   endif
   if with_gbm and not with_platform_android and not with_platform_tizen
      _platforms += 'drm'
    endif
+
+
   lines += 'EGL/Vulkan/VL platforms:   ' + ' '.join(_platforms)
 endif
 lines += 'GBM:             ' + (with_gbm ? 'yes' : 'no')
