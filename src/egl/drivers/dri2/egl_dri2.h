@@ -557,7 +557,7 @@ dri2_setup_extensions(_EGLDisplay *disp);
 __DRIdrawable *
 dri2_surface_get_dri_drawable(_EGLSurface *surf);
 
-GLboolean
+EGLBoolean
 dri2_validate_egl_image(void *image, void *data);
 
 __DRIimage *
