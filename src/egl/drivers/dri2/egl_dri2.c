@@ -406,7 +406,7 @@ dri2_add_config(_EGLDisplay *disp, const __DRIconfig *dri_config, int id,
    struct dri2_egl_config *conf;
    struct dri2_egl_display *dri2_dpy = dri2_egl_display(disp);
    _EGLConfig base;
-   unsigned int attrib, value, double_buffer;
+   unsigned int pbuffer_width = 0, pbuffer_height = 0, pbuffer_pixels = 0;
    bool srgb = false;
    EGLint key, bind_to_texture_rgb, bind_to_texture_rgba;
    int dri_shifts[4] = { -1, -1, -1, -1 };
@@ -530,11 +530,16 @@ dri2_add_config(_EGLDisplay *disp, const __DRIconfig *dri_config, int id,
          break;
 
       case __DRI_ATTRIB_MAX_PBUFFER_WIDTH:
-         base.MaxPbufferWidth = _EGL_MAX_PBUFFER_WIDTH;
+         pbuffer_width = (value != 0) ? value : _EGL_MAX_PBUFFER_WIDTH;
          break;
       case __DRI_ATTRIB_MAX_PBUFFER_HEIGHT:
-         base.MaxPbufferHeight = _EGL_MAX_PBUFFER_HEIGHT;
+         pbuffer_height = (value != 0) ? value : _EGL_MAX_PBUFFER_HEIGHT;
          break;
+
+      case __DRI_ATTRIB_MAX_PBUFFER_PIXELS:
+         pbuffer_pixels = value;
+         break;
+
       case __DRI_ATTRIB_MUTABLE_RENDER_BUFFER:
          if (disp->Extensions.KHR_mutable_render_buffer)
             surface_type |= EGL_MUTABLE_RENDER_BUFFER_BIT_KHR;
@@ -612,6 +617,17 @@ dri2_add_config(_EGLDisplay *disp, const __DRIconfig *dri_config, int id,
          break;
       }
    }
+
+   if (surface_type & EGL_PBUFFER_BIT) {
+      if (pbuffer_pixels == 0)
+         pbuffer_pixels = pbuffer_width * pbuffer_height;
+
+      base.MaxPbufferWidth = pbuffer_width;
+      base.MaxPbufferHeight = pbuffer_height;
+      base.MaxPbufferPixels = pbuffer_pixels;
+   }
+
+
 
    if (attr_list)
       for (int i = 0; attr_list[i] != EGL_NONE; i += 2)
