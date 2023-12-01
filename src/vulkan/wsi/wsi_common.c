@@ -164,6 +164,11 @@ wsi_device_init(struct wsi_device *wsi,
       }
    }
 
+#if !defined(VULKAN_WSI_BGRA8_SNORM_FIRST)
+   else
+      wsi->force_bgra8_unorm_first = true;
+#endif
+
    return VK_SUCCESS;
 #if defined(VK_USE_PLATFORM_XCB_KHR) || \
    defined(VK_USE_PLATFORM_WAYLAND_KHR) || \
