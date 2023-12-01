@@ -113,6 +113,7 @@ wsi_create_native_image(const struct wsi_swapchain *chain,
                         const uint32_t *num_modifiers,
                         const uint64_t *const *modifiers,
                         bool host_visible,
+                        int display_fd,
                         uint8_t *(alloc_shm)(struct wsi_image *image, unsigned size),
                         struct wsi_image *image)
 {
@@ -176,6 +177,13 @@ wsi_create_native_image(const struct wsi_swapchain *chain,
       image_format_list.pNext = NULL;
       __vk_append_struct(&image_info, &image_format_list);
    }
+
+   struct wsi_image_create_info2 image_wsi_info2 = {
+      .sType = VK_STRUCTURE_TYPE_WSI_IMAGE_CREATE_INFO2_MESA,
+      .display_fd = display_fd,
+   };
+   __vk_append_struct(&image_info, &image_wsi_info2);
+
 
    VkImageDrmFormatModifierListCreateInfoEXT image_modifier_list;
 
@@ -328,9 +336,16 @@ wsi_create_native_image(const struct wsi_swapchain *chain,
       .pNext = NULL,
       .implicit_sync = true,
    };
+
+   const struct wsi_memory_allocate_info2 memory_wsi_info2 = {
+      .sType = VK_STRUCTURE_TYPE_WSI_MEMORY_ALLOCATE_INFO2_MESA,
+      .pNext = &memory_wsi_info,
+      .display_fd = display_fd,
+   };
+
    const VkExportMemoryAllocateInfo memory_export_info = {
       .sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO,
-      .pNext = &memory_wsi_info,
+      .pNext = &memory_wsi_info2,
       .handleTypes = wsi->sw ? VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT :
       VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
    };
@@ -467,6 +482,7 @@ VkResult
 wsi_create_prime_image(const struct wsi_swapchain *chain,
                        const VkSwapchainCreateInfoKHR *pCreateInfo,
                        bool use_modifier,
+                       int display_fd,
                        struct wsi_image *image)
 {
    const struct wsi_device *wsi = chain->wsi;
@@ -509,7 +525,7 @@ wsi_create_prime_image(const struct wsi_swapchain *chain,
    };
    const VkExportMemoryAllocateInfo prime_memory_export_info = {
       .sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO,
-      .pNext = &memory_wsi_info,
+      .pNext = &memory_wsi_info2,
       .handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
    };
    const VkMemoryDedicatedAllocateInfo prime_memory_dedicated_info = {
