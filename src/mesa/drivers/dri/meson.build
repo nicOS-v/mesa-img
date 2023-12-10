@@ -49,6 +49,13 @@ if with_dri_nouveau
   _dri_link += 'nouveau_vieux_dri.so'
 endif
 
+if with_dri_pvr
+  subdir('pvr')
+  _dri_drivers += libpvr
+  _dri_link += 'pvr_dri.so'
+endif
+
+
 if _dri_drivers != []
   libmesa_dri_drivers = shared_library(
     '@0@_dri_drivers'.format(glvnd_vendor_name),
