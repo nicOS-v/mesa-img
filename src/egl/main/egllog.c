@@ -155,6 +155,14 @@ _eglInitLogger(void)
    }
 }
 
+/**
+ * Return the log level.
+ */
+EGLint
+_eglGetLogLevel(void)
+{
+   return logging.level;
+}
 
 /**
  * Log a message with message logger.
