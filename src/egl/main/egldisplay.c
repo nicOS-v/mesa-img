@@ -86,6 +86,7 @@ static const struct {
    { _EGL_PLATFORM_DEVICE, "device" },
    { _EGL_PLATFORM_WINDOWS, "windows" },
    { _EGL_PLATFORM_TIZEN, "tizen" },
+   { _EGL_PLATFORM_NULL, "null" },
 };
 
 
