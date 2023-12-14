@@ -101,7 +101,7 @@ struct zwp_linux_dmabuf_v1;
 #include "util/u_vector.h"
 #include "util/bitset.h"
 
-#define EGL_DRI2_MAX_FORMATS 11
+#define EGL_DRI2_MAX_FORMATS 16
 
 struct wl_buffer;
 

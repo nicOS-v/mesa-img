@@ -72,7 +72,6 @@ uint32_t get_back_buffer_id(struct dri2_egl_surface *dri2_surf)
    return (uint32_t) (offset / sizeof(dri2_surf->color_buffers[0]));
 }
 
-
 #define object_property_set_named(output, object_type, prop_name, value)    \
    {                                                                        \
       .object_id = (output)->object_type##_id,                              \
@@ -123,7 +122,6 @@ static const struct dri2_null_yuv_attrib {
       .plane_bpp = __DRI_ATTRIB_YUV_PLANE_BPP_8_BIT,
    },
 };
-
 
 /*
  * The index of entries in this table is used as a bitmask in
@@ -252,7 +250,6 @@ yuv_format_idx_get_from_config(struct dri2_egl_display *dri2_dpy,
    return -1;
 }
 
-
 static int
 format_idx_get_from_dri_image_format(uint32_t dri_image_format)
 {
@@ -285,7 +282,6 @@ blob_id_from_property_value(uint64_t prop_value)
    return (uint32_t) prop_value;
 }
 
-
 static int
 atomic_state_add_object_properties(drmModeAtomicReq *atomic_state,
                                    const struct object_property *props,
@@ -317,7 +313,6 @@ property_id_get_for_name(drmModePropertyRes **prop_res, const char *prop_name)
 
    return 0;
 }
-
 
 static drmModePropertyRes **
 object_get_property_resources(int fd, uint32_t object_id, uint32_t object_type)
@@ -535,7 +530,6 @@ display_output_atomic_init(int fd, struct display_output *output)
    if (property_id_get_for_name(plane_prop_res, "IN_FENCE_FD"))
       output->in_fence_supported = true;
 
-
    output->connector_prop_res = connector_prop_res;
    output->crtc_prop_res = crtc_prop_res;
    output->plane_prop_res = plane_prop_res;
@@ -600,8 +594,6 @@ atomic_relinquish_in_fence_fd(struct dri2_egl_surface *dri2_surf,
    swap_data->kms_in_fence_fd = -1;
 }
 
-
-
 static int
 display_output_atomic_flip(int fd, struct display_output *output, uint32_t fb_id,
                            uint32_t flags, void *flip_data)
@@ -622,7 +614,6 @@ display_output_atomic_flip(int fd, struct display_output *output, uint32_t fb_id
       return err;
 
    display_output_atomic_add_in_fence(output, swap_data->kms_in_fence_fd);
-
 
    /*
     * Don't block - like drmModePageFlip, drmModeAtomicCommit will return
@@ -733,7 +724,6 @@ swap_drain_queue_data(struct dri2_egl_surface *dri2_surf)
    pthread_mutex_unlock(&dri2_surf->mutex);
 }
 
-
 static void
 flip_handler(int fd, unsigned int sequence, unsigned int tv_sec,
              unsigned int tv_usec, void *flip_data)
@@ -788,8 +778,6 @@ drm_event_process(int fd)
 
    return 0;
 }
-
-
 
 static bool
 plane_init_in_formats(int fd, drmModePlane *plane, struct u_vector *modifiers,
@@ -903,12 +891,11 @@ display_output_init(int fd, struct display_output *output, bool use_atomic,
 
          output->formats |= (1 << format_idx);
       }
-    }
+   }
 
    /* At this point we can only shut down if the look up failed and
     * it is safe to pass NULL to drmModeFreeFormats().
     */
-   }
    if (!output->formats)
       goto err_free_plane;
 
@@ -945,7 +932,6 @@ static int
 display_output_flip(int fd, struct display_output *output, uint32_t fb_id,
                     uint32_t flags, void *flip_data)
 {
-
    int err;
 
    do {
@@ -982,7 +968,6 @@ display_get_vblank_sequence(int fd, uint32_t *current_vblank_out)
    err = drmWaitVBlank(fd, &vblank);
    if (err)
       return err;
- 
 
    *current_vblank_out = vblank.reply.sequence;
 
@@ -998,7 +983,6 @@ display_output_modeset(int fd, struct display_output *output, uint32_t fb_id)
    return drmModeSetCrtc(fd, output->crtc_id, fb_id, 0, 0,
                          &output->connector_id, 1, &output->mode);
 }
-
 
 static int
 swap_idle_get_target_frame(struct dri2_egl_surface *dri2_surf,
@@ -1222,11 +1206,9 @@ add_fb_for_dri_image(struct dri2_egl_display *dri2_dpy, __DRIimage *image,
    int format_idx;
    int num_planes;
 
-
    dri2_dpy->image->queryImage(image, __DRI_IMAGE_ATTRIB_WIDTH, &width);
    dri2_dpy->image->queryImage(image, __DRI_IMAGE_ATTRIB_HEIGHT, &height);
    dri2_dpy->image->queryImage(image, __DRI_IMAGE_ATTRIB_FORMAT, &format);
-
 
    format_idx = format_idx_get_from_dri_image_format(format);
    assert(format_idx != -1);
@@ -1272,7 +1254,6 @@ add_fb_for_dri_image(struct dri2_egl_display *dri2_dpy, __DRIimage *image,
       offsets[i] = (uint32_t) offset;
       handles[i] = (uint32_t) handle;
    }
-
 
    return !drmModeAddFB2WithModifiers(dri2_dpy->fd_dpy, width, height,
                                       dri2_null_formats[format_idx].drm_format,
@@ -1411,7 +1392,6 @@ in_formats_get_modifiers(const int fd, const uint32_t in_formats_id,
    return mod != NULL;
 }
 
-
 static _EGLSurface *
 create_surface(_EGLDisplay *disp, _EGLConfig *config, EGLint type,
                const EGLint *attrib_list)
@@ -1472,7 +1452,6 @@ create_surface(_EGLDisplay *disp, _EGLConfig *config, EGLint type,
       if (!ret)
          goto err_free_surface;
    }
-
 
    surface_swap_queue_init(dri2_surf);
 
@@ -1539,7 +1518,6 @@ dri2_null_create_window_surface(_EGLDisplay *disp, _EGLConfig *config,
       goto err_destroy_surface;
    }
 
-
    if (!get_front_bo(dri2_surf))  {
       _eglError(EGL_BAD_NATIVE_WINDOW, "window get buffer");
       goto err_destroy_surface;
@@ -1561,7 +1539,6 @@ dri2_null_create_window_surface(_EGLDisplay *disp, _EGLConfig *config,
       _eglError(EGL_BAD_ALLOC, "failed to create swap thread");
       goto err_destroy_surface;
    }
-
 
    return surf;
 
@@ -1631,7 +1608,6 @@ dri2_null_disable_front_buffer_render(_EGLSurface *draw)
    dri2_surf->back = NULL;
 }
 
-
 static EGLBoolean
 dri2_null_destroy_surface(_EGLDisplay *disp, _EGLSurface *surf)
 {
@@ -1698,7 +1674,6 @@ dri2_null_swap_buffers(_EGLDisplay *disp, _EGLSurface *draw)
       return EGL_TRUE;
    }
 
-
    for (unsigned i = 0; i < ARRAY_SIZE(dri2_surf->color_buffers); i++)
       if (dri2_surf->color_buffers[i].age > 0)
          dri2_surf->color_buffers[i].age++;
@@ -1717,9 +1692,8 @@ dri2_null_swap_buffers(_EGLDisplay *disp, _EGLSurface *draw)
    assert(dri2_surf->back == &dri2_surf->color_buffers[back_id]);
 
    swap_enqueue_data(dri2_surf, back_id, draw->SwapInterval);
- 
-   /* This back buffer is tracked in the swap_data, safe to drop it now */
 
+   /* This back buffer is tracked in the swap_data, safe to drop it now */
    dri2_surf->back->age = 1;
    dri2_surf->back = NULL;
 
@@ -1758,12 +1732,10 @@ dri2_null_swap_interval(_EGLDisplay *dpy, _EGLSurface *draw, EGLint interval)
          dri2_null_disable_front_buffer_render(draw);
    }
 
-
    _eglLog(_EGL_DEBUG, "DRI2: set swap interval to %d", interval);
    draw->SwapInterval = interval;
    return EGL_TRUE;
 }
-
 
 static struct dri2_egl_display_vtbl dri2_null_display_vtbl = {
    .create_window_surface = dri2_null_create_window_surface,
@@ -1819,7 +1791,6 @@ dri2_null_get_capability(void *loaderPrivate, enum dri_loader_cap cap)
    }
 }
 
-
 static void
 dri2_null_flush_front_buffer(__DRIdrawable * driDrawable, void *loaderPrivate)
 {
@@ -1835,7 +1806,6 @@ dri2_null_get_display_fd(void *loaderPrivate)
 
    return dri2_dpy->fd_dpy;
 }
-
 
 static const __DRIimageLoaderExtension image_loader_extension = {
    .base = { __DRI_IMAGE_LOADER, 5 },
@@ -1871,7 +1841,6 @@ dri2_null_device_is_kms(int fd)
 
    return is_kms;
 }
-
 
 static bool
 dri2_null_try_device(_EGLDisplay *disp)
@@ -1935,7 +1904,6 @@ dri2_null_try_device(_EGLDisplay *disp)
 
    return false;
 }
-
 
 static bool
 dri2_null_probe_device(_EGLDisplay *disp, unsigned minor)
@@ -2037,7 +2005,6 @@ dri2_null_add_configs_for_formats(_EGLDisplay *disp)
 
    return count != 0;
 }
-
 static void
 dri2_null_setup_swap_interval(_EGLDisplay *disp)
 {
@@ -2071,7 +2038,6 @@ dri2_null_setup_swap_interval(_EGLDisplay *disp)
          dri2_dpy->async_flip_enabled = true;
    }
 }
-
 
 EGLBoolean
 dri2_initialize_null(_EGLDisplay *disp)
@@ -2144,8 +2110,7 @@ dri2_initialize_null(_EGLDisplay *disp)
          dri2_dpy->image->createImageWithModifiers;
    }
 
-
-  if (!display_output_init(dri2_dpy->fd_dpy, &dri2_dpy->output,
+   if (!display_output_init(dri2_dpy->fd_dpy, &dri2_dpy->output,
                             dri2_dpy->atomic_enabled,
                             prefer_in_formats,
                             &dri2_dpy->in_formats_enabled)) {

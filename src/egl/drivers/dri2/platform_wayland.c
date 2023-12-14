@@ -518,7 +518,7 @@ dri2_wl_create_pbuffer_surface(_EGLDisplay *disp, _EGLConfig *conf,
       goto cleanup_surf;
    }
 
-   visual_idx = dri2_wl_visual_idx_from_config(dri2_dpy, config);
+   visual_idx = dri2_wl_visual_idx_from_config(dri2_dpy, config, false);
    assert(visual_idx != -1);
 
    if (dri2_dpy->wl_dmabuf || dri2_dpy->wl_drm) {

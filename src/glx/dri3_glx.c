@@ -912,7 +912,6 @@ dri3_create_screen(int screen, struct glx_display * priv)
    psc->fd_dpy = os_dupfd_cloexec(psc->fd);
    psc->fd_display_gpu = fcntl(psc->fd, F_DUPFD_CLOEXEC, 3);
    psc->fd = loader_get_user_preferred_fd(psc->fd, &is_different_gpu);
-   if (!is_different_gpu) {
    if (!psc->is_different_gpu) {
       close(psc->fd_display_gpu);
       psc->fd_display_gpu = -1;
@@ -1231,5 +1230,7 @@ no_extension:
    free(pdp);
    return NULL;
 }
+
+
 
 #endif /* GLX_DIRECT_RENDERING */

@@ -1444,7 +1444,7 @@ gbm_dri_bo_blit(struct gbm_bo *_dst_bo, struct gbm_bo *_src_bo,
    mtx_unlock(&dri->mutex);
    if (!dri->context) {
       errno = ENOSYS;
-      return NULL;
+      return -1;
    }
 
    /* GBM flags and DRI flags are the same, so just pass them on */
