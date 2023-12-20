@@ -26,7 +26,6 @@ pvr_wsi_includes = [
   inc_include,
   inc_src,
   inc_vulkan_util,
-  inc_vulkan_wsi
 ]
 
 pvr_wsi_src = [ 'pvr_wsi.c' ]

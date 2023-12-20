@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-#include "wsi_common_wayland.h"
+#include "vulkan/wsi/wsi_common_wayland.h"
 
 #include "pvr_wsi.h"
 #include "pvr_mesa_wsi_interface.h"

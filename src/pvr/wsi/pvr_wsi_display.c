@@ -22,10 +22,10 @@
  * THE SOFTWARE.
  */
 
-#include "wsi_common_display.h"
+#include "vulkan/wsi/wsi_common_display.h"
 
 #if defined(VK_USE_PLATFORM_XLIB_XRANDR_EXT)
-#include "wsi_common_x11.h"
+#include "vulkan/wsi/wsi_common_x11.h"
 #endif
 
 #include "pvr_wsi.h"

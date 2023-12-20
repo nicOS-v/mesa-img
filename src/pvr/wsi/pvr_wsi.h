@@ -29,7 +29,7 @@
 #include "util/u_memory.h"
 #include "util/u_atomic.h"
 
-#include "wsi_common.h"
+#include "vulkan/wsi/wsi_common.h"
 
 #define  Container(p, s, m) ((s *) ((uintptr_t)(p) - Offset(s, m)))
 

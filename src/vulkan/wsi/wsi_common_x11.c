@@ -49,6 +49,7 @@
 #include "vk_enum_to_str.h"
 #include "wsi_common_entrypoints.h"
 #include "wsi_common_private.h"
+#include "wsi_common_x11.h"
 #include "wsi_common_queue.h"
 
 #ifdef HAVE_SYS_SHM_H
@@ -511,6 +512,72 @@ wsi_GetPhysicalDeviceXlibPresentationSupportKHR(VkPhysicalDevice physicalDevice,
                                                          queueFamilyIndex,
                                                          XGetXCBConnection(dpy),
                                                          visualID);
+}
+
+VkResult wsi_create_xcb_surface(const VkAllocationCallbacks *pAllocator,
+				const VkXcbSurfaceCreateInfoKHR *pCreateInfo,
+				VkSurfaceKHR *pSurface)
+{
+   VkIcdSurfaceXcb *surface;
+
+   surface = vk_alloc(pAllocator, sizeof *surface, 8,
+                      VK_SYSTEM_ALLOCATION_SCOPE_OBJECT);
+   if (surface == NULL)
+      return VK_ERROR_OUT_OF_HOST_MEMORY;
+
+   surface->base.platform = VK_ICD_WSI_PLATFORM_XCB;
+   surface->connection = pCreateInfo->connection;
+   surface->window = pCreateInfo->window;
+
+   *pSurface = VkIcdSurfaceBase_to_handle(&surface->base);
+   return VK_SUCCESS;
+}
+
+
+VkResult wsi_create_xlib_surface(const VkAllocationCallbacks *pAllocator,
+				 const VkXlibSurfaceCreateInfoKHR *pCreateInfo,
+				 VkSurfaceKHR *pSurface)
+{
+   VkIcdSurfaceXlib *surface;
+
+   surface = vk_alloc(pAllocator, sizeof *surface, 8,
+                      VK_SYSTEM_ALLOCATION_SCOPE_OBJECT);
+   if (surface == NULL)
+      return VK_ERROR_OUT_OF_HOST_MEMORY;
+
+   surface->base.platform = VK_ICD_WSI_PLATFORM_XLIB;
+   surface->dpy = pCreateInfo->dpy;
+   surface->window = pCreateInfo->window;
+
+   *pSurface = VkIcdSurfaceBase_to_handle(&surface->base);
+   return VK_SUCCESS;
+}
+
+VkBool32 wsi_get_physical_device_xcb_presentation_support(
+    struct wsi_device *wsi_device,
+    uint32_t                                    queueFamilyIndex,
+    xcb_connection_t*                           connection,
+    xcb_visualid_t                              visual_id)
+{
+   struct wsi_x11_connection *wsi_conn =
+      wsi_x11_get_connection(wsi_device, connection);
+
+   if (!wsi_conn)
+      return false;
+
+   if (!wsi_device->sw) {
+      if (!wsi_x11_check_for_dri3(wsi_conn))
+         return false;
+   }
+
+   unsigned visual_depth;
+   if (!connection_get_visualtype(connection, visual_id, &visual_depth))
+      return false;
+
+   if (visual_depth != 24 && visual_depth != 32)
+      return false;
+
+   return true;
 }
 
 static xcb_connection_t*
@@ -1424,8 +1491,8 @@ x11_image_init(VkDevice device_h, struct x11_swapchain *chain,
    } else {
       result = wsi_create_native_image(&chain->base, pCreateInfo,
                                        num_tranches, num_modifiers, modifiers,
-                                       chain->base.wsi->sw, display_fd,
-                                       &image->base);
+                                       chain->base.wsi->sw, 
+                                       NULL,display_fd,&image->base);
    }
    if (result < 0)
       return result;
