@@ -1037,7 +1037,7 @@ wsi_display_image_init(VkDevice device_h,
 
    VkResult result = wsi_create_native_image(&chain->base, create_info,
                                              0, NULL, NULL, NULL, false,
-                                             &image->base);
+                                             wsi->fd, &image->base);
    if (result != VK_SUCCESS)
       return result;
 

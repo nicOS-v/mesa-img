@@ -44,7 +44,9 @@ extern const struct vk_device_entrypoint_table wsi_device_entrypoints;
 #define VK_STRUCTURE_TYPE_WSI_MEMORY_ALLOCATE_INFO_MESA (VkStructureType)1000001003
 #define VK_STRUCTURE_TYPE_WSI_SURFACE_SUPPORTED_COUNTERS_MESA (VkStructureType)1000001005
 #define VK_STRUCTURE_TYPE_WSI_MEMORY_SIGNAL_SUBMIT_INFO_MESA (VkStructureType)1000001006
-
+#define VK_STRUCTURE_TYPE_WSI_IMAGE_CREATE_INFO2_MESA (VkStructureType)1000001007
+#define VK_STRUCTURE_TYPE_WSI_MEMORY_ALLOCATE_INFO2_MESA (VkStructureType)1000001008
+ 
 /* This is always chained to VkImageCreateInfo when a wsi image is created.
  * It indicates that the image can be transitioned to/from
  * VK_IMAGE_LAYOUT_PRESENT_SRC_KHR.
@@ -79,6 +81,20 @@ struct wsi_memory_signal_submit_info {
     const void *pNext;
     VkDeviceMemory memory;
 };
+
+struct wsi_image_create_info2 {
+    VkStructureType sType;
+    const void *pNext;
+    int display_fd;
+};
+
+struct wsi_memory_allocate_info2 {
+    VkStructureType sType;
+    const void *pNext;
+    int display_fd;
+};
+
+
 
 struct wsi_fence {
    VkDevice                     device;
