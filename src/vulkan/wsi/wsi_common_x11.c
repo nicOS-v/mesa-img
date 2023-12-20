@@ -235,7 +235,7 @@ wsi_x11_connection_create(struct wsi_device *wsi_dev,
 
       ver_cookie = xcb_dri3_query_version(conn, 1, 2);
       ver_reply = xcb_dri3_query_version_reply(conn, ver_cookie, NULL);
-      has_dri3_v1_2 =
+      has_dri3_v1_2 = ver_reply != NULL &&
          (ver_reply->major_version > 1 || ver_reply->minor_version >= 2);
       free(ver_reply);
    }
@@ -1422,7 +1422,7 @@ x11_image_init(VkDevice device_h, struct x11_swapchain *chain,
    } else {
       result = wsi_create_native_image(&chain->base, pCreateInfo,
                                        num_tranches, num_modifiers, modifiers,
-                                       chain->has_mit_shm ? &alloc_shm : NULL,
+                                       chain->base.wsi->sw,
                                        &image->base);
    }
    if (result < 0)
