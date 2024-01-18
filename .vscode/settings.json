@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "gralloc.h": "c",
-        "log.h": "c"
+        "log.h": "c",
+        "xutility": "c"
     }
 }
