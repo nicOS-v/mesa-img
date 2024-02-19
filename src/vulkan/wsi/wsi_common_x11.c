@@ -1422,7 +1422,7 @@ x11_image_init(VkDevice device_h, struct x11_swapchain *chain,
    } else {
       result = wsi_create_native_image(&chain->base, pCreateInfo,
                                        num_tranches, num_modifiers, modifiers,
-                                       chain->has_mit_shm ? &alloc_shm : NULL,
+                                       chain->base.wsi->sw,
                                        &image->base);
    }
    if (result < 0)

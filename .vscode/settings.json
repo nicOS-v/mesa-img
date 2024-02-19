@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "iterator": "c",
+        "memory": "c",
+        "random": "c",
+        "xutility": "c"
+    }
+}
