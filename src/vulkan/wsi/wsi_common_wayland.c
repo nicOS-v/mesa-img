@@ -32,6 +32,8 @@
 #include <pthread.h>
 #include <poll.h>
 #include <sys/mman.h>
+#include <fcntl.h>
+#include <xf86drm.h>
 
 #include "drm-uapi/drm_fourcc.h"
 
@@ -68,6 +70,10 @@ struct wsi_wl_display {
    struct zwp_linux_dmabuf_v1 *                 wl_dmabuf;
 
    struct wsi_wayland *wsi_wl;
+
+  int                                          fd;
+  bool                                         authenticated;
+  
 
    /* Formats populated by zwp_linux_dmabuf_v1 or wl_shm interfaces */
    struct u_vector                              formats;
@@ -402,6 +408,54 @@ wsi_wl_display_add_wl_shm_format(struct wsi_wl_display *display,
    }
 }
 
+static int
+open_display_device(const char *name)
+{
+   int fd;
+
+#ifdef O_CLOEXEC
+   fd = open(name, O_RDWR | O_CLOEXEC);
+   if (fd != -1 || errno != EINVAL) {
+      return fd;
+   }
+#endif
+
+   fd = open(name, O_RDWR);
+   if (fd != -1) {
+      long flags = fcntl(fd, F_GETFD);
+
+      if (flags != -1) {
+         if (!fcntl(fd, F_SETFD, flags | FD_CLOEXEC))
+             return fd;
+      }
+      close (fd);
+   }
+
+   return -1;
+}
+ 
+ static void
+ drm_handle_device(void *data, struct wl_drm *drm, const char *name)
+ {
+   struct wsi_wl_display *display = data;
+   const int fd = open_display_device(name);
+
+   if (fd != -1) {
+      if (drmGetNodeTypeFromFd(fd) != DRM_NODE_RENDER) {
+         drm_magic_t magic;
+
+         if (drmGetMagic(fd, &magic)) {
+            close(fd);
+	    return;
+         }
+	 wl_drm_authenticate(drm, magic);
+      } else {
+         display->authenticated = true;
+      }
+      display->fd = fd;
+   }
+ }
+
 static uint32_t
 wl_drm_format_for_vk_format(VkFormat vk_format, bool alpha)
 {
@@ -473,6 +527,40 @@ wl_shm_format_for_vk_format(VkFormat vk_format, bool alpha)
       return 0;
    }
 }
+
+
+static void
+drm_handle_format(void *data, struct wl_drm *drm, uint32_t wl_format)
+{
+   struct wsi_wl_display *display = data;
+   if (display->drm.formats.element_size == 0)
+      return;
+
+   wsi_wl_display_add_wl_format(display, &display->drm.formats, wl_format);
+}
+
+static void
+drm_handle_authenticated(void *data, struct wl_drm *drm)
+{
+   struct wsi_wl_display *display = data;
+
+   display->authenticated = true;
+}
+
+static void
+drm_handle_capabilities(void *data, struct wl_drm *drm, uint32_t capabilities)
+{
+   struct wsi_wl_display *display = data;
+
+   display->drm.capabilities = capabilities;
+}
+
+static const struct wl_drm_listener drm_listener = {
+   drm_handle_device,
+   drm_handle_format,
+   drm_handle_authenticated,
+   drm_handle_capabilities,
+};
 
 static void
 dmabuf_handle_format(void *data, struct zwp_linux_dmabuf_v1 *dmabuf,
@@ -561,6 +649,8 @@ wsi_wl_display_finish(struct wsi_wl_display *display)
       wl_proxy_wrapper_destroy(display->wl_display_wrapper);
    if (display->queue)
       wl_event_queue_destroy(display->queue);
+   if (display->fd != -1)
+      close(display->fd);
 }
 
 static VkResult
@@ -578,6 +668,7 @@ wsi_wl_display_init(struct wsi_wayland *wsi_wl,
    display->wsi_wl = wsi_wl;
    display->wl_display = wl_display;
    display->sw = sw;
+   display->fd = -1;
 
    display->queue = wl_display_create_queue(wl_display);
    if (!display->queue) {
@@ -605,7 +696,7 @@ wsi_wl_display_init(struct wsi_wayland *wsi_wl,
 
    /* Round-trip to get wl_shm and zwp_linux_dmabuf_v1 globals */
    wl_display_roundtrip_queue(display->wl_display, display->queue);
-   if (!display->wl_dmabuf && !display->wl_shm) {
+   if (!display->drm.wl_drm && !display->dmabuf.wl_dmabuf && !display->swrast.wl_shm) {
       result = VK_ERROR_SURFACE_LOST_KHR;
       goto fail_registry;
    }
@@ -1154,7 +1245,7 @@ wsi_wl_image_init(struct wsi_wl_swapchain *chain,
                                     chain->num_drm_modifiers > 0 ? 1 : 0,
                                     &chain->num_drm_modifiers,
                                     &chain->drm_modifiers, false,
-                                    &image->base);
+                                    display->fd, &image->base);
 
    if (result != VK_SUCCESS)
       return result;
